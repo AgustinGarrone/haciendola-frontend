@@ -1,11 +1,10 @@
 "use client";
 import axios, { AxiosInstance } from "axios";
-import { jwtDecode } from "jwt-decode";
 
 export async function getAuthFromCache(): Promise<string | null> {
   const token = localStorage.getItem("accessToken");
   if (token) {
-    return jwtDecode(token);
+    return token;
   }
   return null;
 }
@@ -23,7 +22,7 @@ export default class RESTClient {
           throw new Error("Config is not defined");
         }
 
-        const jwt = getAuthFromCache();
+        const jwt = await getAuthFromCache();
         const allowedDomain = process.env.REACT_APP_DOMAIN;
         if (jwt) config.headers["Authorization"] = `Bearer ${jwt}`;
         config.headers["X-Frame-Options"] = "SAMEORIGIN";

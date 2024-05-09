@@ -10,7 +10,7 @@ export const NoteCreation: FC = () => {
 
   return (
     <Flex h="5em" w="100%" alignItems="center" justifyContent="center">
-      <Text fontSize="3rem">Tus Notas</Text>
+      <Text fontSize="3rem">Productos actuales</Text>
       <MdNoteAdd
         style={{ marginLeft: "4em" }}
         size={40}

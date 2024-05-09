@@ -1,12 +1,8 @@
 "use client";
 import { LoginMutationData, RegisterMutationData } from "@/types/auth";
 import { useMutation } from "react-query";
-import AuthClient from "../clients/apiClient";
+import AuthClient from "../clients/authClient";
 import { UserWithToken } from "@/types/models";
-interface IJwt {
-  token_type: string;
-  access_token: string;
-}
 
 const useLoginMutation = () => {
   return useMutation<UserWithToken, Error, LoginMutationData>(
