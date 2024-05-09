@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginPage } from "@/screen/login";
 
@@ -10,21 +10,25 @@ type Props = {
 
 export const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated } = useAuth();
-  const [authState , setAuthState] = useState(false)
+  const [authState, setAuthState] = useState(false);
 
   useEffect(() => {
     const checkAuthAndRedirect = async () => {
       if (isAuthenticated()) {
-        setAuthState(true)
+        setAuthState(true);
+        if (pathname === "/login") {
+          router.push("/");
+        }
       } else {
         router.push("/login");
-        setAuthState(false)
+        setAuthState(false);
       }
     };
 
     checkAuthAndRedirect();
   }, [isAuthenticated, router]);
 
-   return !authState ? <div>{children}</div> : <LoginPage />;
+  return authState ? <div>{children}</div> : <LoginPage />;
 };
