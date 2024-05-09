@@ -1,27 +1,29 @@
 import { useAuthClient } from "@/hooks/useAuthClient";
 import {
-  Flex,
-  Text,
-  FormControl,
-  FormLabel,
-  Input,
-  FormHelperText,
-  Button,
   Alert,
   AlertIcon,
+  Button,
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Text,
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { FormMode } from "..";
+import { registerSchema } from "./form.schemas";
 import { z } from "zod";
-import { loginSchema } from "./form.schemas";
 import { useRouter } from "next/navigation";
 
-type LoginFormProps = {
+type RegisterFormProps = {
   changeMode: Dispatch<SetStateAction<FormMode>>;
 };
 
-export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
-  const { loginMutation } = useAuthClient();
+export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
+  const { registerMutation } = useAuthClient();
+  const [name, setName] = useState("");
+  const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,11 +33,11 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
     event.preventDefault();
 
     try {
-      const formData = { email, password };
-      loginSchema.parse(formData);
+      const formData = { name, lastname, email, password };
+      registerSchema.parse(formData);
       setError(null);
 
-      await loginMutation.mutateAsync(formData, {
+      await registerMutation.mutateAsync(formData, {
         onSuccess: (data) => {
           localStorage.setItem("accessToken", data.token);
           router.push("/");
@@ -45,34 +47,50 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
           throw new Error(error.message);
         },
       });
-      router.push("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         setError(error.errors[0].message);
       } else {
-        console.error("Error al iniciar sesión:", error);
+        console.error("Error al registrar:", error);
       }
     }
   };
 
   return (
     <Flex
-      w="70%"
-      mt="8em"
       direction="column"
+      mt="8em"
       alignItems="center"
       justifyContent="center"
     >
       <Text fontSize="2rem" fontWeight="bold">
-        Bienvenido, Haciendola!
+        ¡Regístrate!
       </Text>
       {error && (
-        <Alert status="error" mb={4} borderRadius="md">
+        <Alert status="error" mb={4}>
           <AlertIcon />
           {error}
         </Alert>
       )}
       <form onSubmit={handleSubmit}>
+        <FormControl id="name" mt={4}>
+          <FormLabel>Nombre</FormLabel>
+          <Input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nombre"
+          />
+        </FormControl>
+        <FormControl id="lastname" mt={4}>
+          <FormLabel>Apellido</FormLabel>
+          <Input
+            type="text"
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
+            placeholder="Apellido"
+          />
+        </FormControl>
         <FormControl id="email" mt={4}>
           <FormLabel>Email</FormLabel>
           <Input
@@ -80,9 +98,6 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Correo electrónico"
-            borderRadius="md"
-            variant="filled"
-            _hover={{ borderColor: "blue.500" }}
           />
           <FormHelperText>Nunca compartiremos tu email.</FormHelperText>
         </FormControl>
@@ -93,24 +108,17 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
-            borderRadius="md"
-            variant="filled"
-            _hover={{ borderColor: "blue.500" }}
           />
         </FormControl>
-        <Button type="submit" mt={6} colorScheme="blue" borderRadius="md">
-          Iniciar sesión
+        <Button type="submit" mt={6} colorScheme="blue">
+          Registrarse
         </Button>
       </form>
-      <Flex w="100%" justifyContent="center">
-        <Text mt={2}>
-          ¿No tienes una cuenta?{" "}
-          <Text
-            onClick={() => changeMode(FormMode.REGISTER)}
-            color="blue"
-            cursor="pointer"
-          >
-            Crear cuenta
+      <Flex>
+        <Text mt={4}>
+          ¿Ya tienes una cuenta?{" "}
+          <Text onClick={() => changeMode(FormMode.LOGIN)} color="blue">
+            Iniciar sesión
           </Text>
         </Text>
       </Flex>
