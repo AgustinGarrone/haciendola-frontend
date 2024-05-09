@@ -2,27 +2,47 @@
 import {
   useGetAllProductsQuery,
   useCountAllProductsQuery,
+  useDeleteProductMutation,
 } from "@/hooks/useProductClient";
 import { Flex } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { ProductCard } from "../../../../../ui/components/ProductCard";
 import { Product } from "@/types/models";
 import Pagination from "./pagination";
+import { confirmAlert, successAlert, errorAlert } from "@/helpers/alerts";
 
 export const ListedProducts: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const deleteProductMutation = useDeleteProductMutation();
 
   const { data, isLoading, refetch, isRefetching } =
     useGetAllProductsQuery(currentPage);
   const { data: productCount, isLoading: totalPagesLoading } =
     useCountAllProductsQuery();
 
-  const handleOnPageChange = (e) => {
+  const handleOnPageChange = (e: number) => {
     setCurrentPage(e);
     refetch();
   };
+
+  const handleOnDeleteCard = async (id: number) => {
+    const actionConfirmed = await confirmAlert(
+      "Eliminar?",
+      "Seguro que desea eliminar este producto? esto es irreversible."
+    );
+    if (actionConfirmed) {
+      deleteProductMutation.mutateAsync(id, {
+        onSuccess: () => {
+          refetch()
+        },
+        onError: () => errorAlert("Error al eliminar"),
+      });
+    }
+  };
+
+  const handleOnEditCard = (id: number) => {};
 
   useEffect(() => {
     setProducts(data!);
@@ -59,6 +79,7 @@ export const ListedProducts: FC = () => {
           products.map((product) => (
             <ProductCard
               key={product.handle}
+              id={product.id}
               handle={product.handle}
               title={product.title}
               description={product.description}
@@ -68,8 +89,8 @@ export const ListedProducts: FC = () => {
               price={product.price}
               comparePrice={product.comparePrice}
               barcode={product.barcode}
-              onDelete={() => console.log(0)}
-              onEdit={() => console.log(0)}
+              onDelete={handleOnDeleteCard}
+              onEdit={handleOnEditCard}
             />
           ))
         ) : (

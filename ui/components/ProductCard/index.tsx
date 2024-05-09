@@ -2,6 +2,7 @@ import { Flex, Box, Text, IconButton, Button } from "@chakra-ui/react";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
 type CardProps = {
+  id: number;
   handle: string;
   title: string;
   description: string;
@@ -11,11 +12,12 @@ type CardProps = {
   price: number;
   comparePrice: number;
   barcode: string;
-  onDelete: () => void;
-  onEdit: () => void;
+  onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 };
 
 export const ProductCard = ({
+  id,
   handle,
   title,
   description,
@@ -47,7 +49,7 @@ export const ProductCard = ({
         position="absolute"
         top="2"
         right="2"
-        onClick={onDelete}
+        onClick={() => onDelete(id)}
       />
       <Flex justify="space-between" align="center" mb="2">
         <Text fontWeight="bold" fontSize="xl">
@@ -64,7 +66,7 @@ export const ProductCard = ({
         </Flex>
       </Flex>
       <div
-        style={{height: '200px', overflow:'hidden'}}
+        style={{ height: "200px", overflow: "hidden" }}
         className="product-description"
         dangerouslySetInnerHTML={{ __html: description }}
       />

@@ -3,6 +3,7 @@ import { Navbar } from "../../../ui/components/Navbar"
 import { NoteCreation } from "./components/NoteCreation"
 import { FC } from "react"
 import { ListedProducts } from "./components/ListedProducts"
+import { Footer } from "../../../ui/components/Footer"
 
 export const HomePage: FC = () => {
   return (
@@ -10,6 +11,7 @@ export const HomePage: FC = () => {
       <Navbar />
       <NoteCreation />
       <ListedProducts/>
+      <Footer/>
     </Flex>
   )
 }
