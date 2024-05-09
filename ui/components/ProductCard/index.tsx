@@ -37,6 +37,7 @@ export const ProductCard = ({
       p="4"
       mb="4"
       w="300px"
+      h="600px"
       position="relative"
     >
       <IconButton
@@ -60,12 +61,13 @@ export const ProductCard = ({
             mr="2"
             onClick={onEdit}
           />
-          <Button colorScheme="blue" size="sm" onClick={onEdit}>
-            Editar
-          </Button>
         </Flex>
       </Flex>
-      <Text mb="2">{description}</Text>
+      <div
+        style={{height: '200px', overflow:'hidden'}}
+        className="product-description"
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
       <Flex justify="space-between" align="center" mb="2">
         <Text fontWeight="semibold">Precio:</Text>
         <Text>${price}</Text>

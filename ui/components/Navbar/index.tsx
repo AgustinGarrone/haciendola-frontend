@@ -14,7 +14,6 @@ export const Navbar = () => {
         <Text ml="2em">Bienvenido de nuevo {userName}</Text>
       </Flex>
       <Flex w="100px" justifyContent="space-around" alignItems="center">
-        <FaSearch size={24} />
         <FaPowerOff size={24} />
       </Flex>
     </Flex>
