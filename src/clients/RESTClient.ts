@@ -1,26 +1,21 @@
+"use client";
 import axios, { AxiosInstance } from "axios";
+import { jwtDecode } from "jwt-decode";
 
-export interface IConfig {
-  baseURL: string;
-}
-
-const userPreferencesKey: string = "@user";
-
-/* export async function getAuthFromCache(): Promise<IAuthUserCache | null> {
-  const cacheAuth = await Preferences.get({ key: userPreferencesKey });
-  if (cacheAuth && cacheAuth.value) {
-    return JSON.parse(cacheAuth.value!) as IAuthUserCache;
+export async function getAuthFromCache(): Promise<string | null> {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    return jwtDecode(token);
   }
   return null;
-} */
+}
 
 export default class RESTClient {
   protected axios: AxiosInstance;
   protected baseUrl: string;
-  constructor(config: IConfig) {
-    const { baseURL } = config;
-    this.baseUrl = baseURL;
-    this.axios = axios.create({ baseURL });
+  constructor() {
+    this.baseUrl = "http://localhost:3000/api/v1/";
+    this.axios = axios.create({ baseURL: this.baseUrl });
 
     this.axios.interceptors.request.use(
       async (config) => {
@@ -28,12 +23,9 @@ export default class RESTClient {
           throw new Error("Config is not defined");
         }
 
-        const auth = 1 //await getAuthFromCache();
-        const jwt = auth?.user;
-        const allowedDomain = '*' // Secrets.REACT_APP_DOMAIN;
-        config.headers["Authorization"] = `${jwt?.token_type.toLowerCase()} ${
-          jwt?.access_token
-        }`;
+        const jwt = getAuthFromCache();
+        const allowedDomain = process.env.REACT_APP_DOMAIN;
+        if (jwt) config.headers["Authorization"] = `Bearer ${jwt}`;
         config.headers["X-Frame-Options"] = "SAMEORIGIN";
         config.headers["X-XSS-Protection"] = "1; mode=block";
         config.headers["X-Content-Type-Options"] = "nosniff";

@@ -1,8 +1,23 @@
-import { jwtDecode } from "jwt-decode";
+import React, { ReactNode, createContext, useContext } from "react";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 
-const useAuthentication = () => {
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+
+const defaultAuthContext = {
+  isAuthenticated: () => false,
+  getToken: () => "",
+  getUserInfo: () => null as JwtPayload | null, 
+  logout: () => {},
+};
+
+const AuthContext = createContext(defaultAuthContext);
+
+export const AuthProvider = ({ children } : AuthProviderProps) => {
   const isAuthenticated = () => {
-    console.log(localStorage);
     const token = localStorage.getItem("accessToken");
     if (token) {
       const decodedToken = jwtDecode(token);
@@ -12,8 +27,16 @@ const useAuthentication = () => {
     return false;
   };
 
+  const getToken = () => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      return token;
+    }
+    return "";
+  };
+
   const getUserInfo = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     if (token) {
       return jwtDecode(token);
     }
@@ -21,15 +44,23 @@ const useAuthentication = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+    localStorage.removeItem("accessToken");
   };
 
-  return {
+  const authContextValue = {
     isAuthenticated,
+    getToken,
     getUserInfo,
     logout,
   };
+
+  return (
+    <AuthContext.Provider value={authContextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export default useAuthentication;
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

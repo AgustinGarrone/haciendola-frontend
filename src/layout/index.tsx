@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import useAuthentication from "@/hooks/useAuth";
 import { LoginPage } from "@/screen/login";
+import { useAuth } from "@/hooks/useAuth";
 
 type Props = {
   children?: React.ReactNode;
@@ -10,7 +10,7 @@ type Props = {
 
 export const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
-  const { isAuthenticated } = useAuthentication();
+  const { isAuthenticated } = useAuth();
   const [authState, setAuthState] = useState(false);
 
   useEffect(() => {
