@@ -1,8 +1,11 @@
+'use client'
+import { useAuth } from "@/hooks/useAuth"
 import { Flex, Text } from "@chakra-ui/react"
 import { FaUserAstronaut, FaSearch, FaPowerOff } from "react-icons/fa"
 
 export const Navbar = () => {
-  const userName = "Chad"
+  const {getUserInfo} = useAuth()
+  const userName =  getUserInfo()?.name
 
   return (
     <Flex w="100%" h="5em" alignItems="center" justifyContent="space-between">

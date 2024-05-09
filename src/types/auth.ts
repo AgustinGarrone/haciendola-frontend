@@ -9,3 +9,10 @@ export type RegisterMutationData = {
   email: string;
   password: string;
 };
+
+export type DecodeTokenData = {
+  name: string;
+  id: number;
+  iat: number;
+  exp: number;
+};

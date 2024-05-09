@@ -1,22 +1,21 @@
 import React, { ReactNode, createContext, useContext } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
-
+import { DecodeTokenData } from "@/types/auth";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-
 const defaultAuthContext = {
   isAuthenticated: () => false,
   getToken: () => "",
-  getUserInfo: () => null as JwtPayload | null, 
+  getUserInfo: () => null as JwtPayload | null,
   logout: () => {},
 };
 
 const AuthContext = createContext(defaultAuthContext);
 
-export const AuthProvider = ({ children } : AuthProviderProps) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const isAuthenticated = () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -35,10 +34,17 @@ export const AuthProvider = ({ children } : AuthProviderProps) => {
     return "";
   };
 
-  const getUserInfo = () => {
+  const getUserInfo = (): DecodeTokenData | null => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      return jwtDecode(token);
+      const decodedToken = jwtDecode(token);
+      const data: DecodeTokenData = {
+        name: decodedToken.name || "",
+        id: decodedToken.id,
+        iat: decodedToken.iat!,
+        exp: decodedToken.exp!,
+      };
+      return data;
     }
     return null;
   };
