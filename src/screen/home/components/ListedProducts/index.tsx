@@ -140,6 +140,7 @@ export const ListedProducts: FC = () => {
           alignItems="center"
           justifyContent="center"
           flexWrap="wrap"
+          gap='1em'
         >
           {products && !isLoading && !isRefetching ? (
             products.map((product) => (

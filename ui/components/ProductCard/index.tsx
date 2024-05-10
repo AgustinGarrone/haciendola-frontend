@@ -43,40 +43,10 @@ export const ProductCard = ({
       h="600px"
       position="relative"
     >
-      <IconButton
-        icon={<FaTrashAlt />}
-        colorScheme="red"
-        aria-label="Eliminar"
-        position="absolute"
-        top="2"
-        right="2"
-        onClick={() => onDelete(id)}
-      />
       <Flex justify="space-between" align="center" mb="2">
         <Text fontWeight="bold" fontSize="xl">
           {title}
         </Text>
-        <Flex>
-          <IconButton
-            icon={<FaEdit />}
-            colorScheme="blue"
-            aria-label="Editar"
-            mr="2"
-            onClick={() =>
-              onEdit(id, {
-                handle,
-                title,
-                description,
-                price,
-                comparePrice,
-                barcode,
-                grams,
-                stock,
-                SKU,
-              })
-            }
-          />
-        </Flex>
       </Flex>
       <div
         style={{ height: "200px", overflow: "hidden" }}
@@ -106,6 +76,36 @@ export const ProductCard = ({
       <Flex justify="space-between" align="center" mb="2">
         <Text fontWeight="semibold">Código de barras:</Text>
         <Text>{barcode}</Text>
+      </Flex>
+      <Flex h="5em" bottom='0' gap="1em" position='absolute' alignItems="center" justifyContent="center">
+        <Button
+          colorScheme="blue"
+          w="7em"
+          leftIcon={<FaEdit />}
+          onClick={() =>
+            onEdit(id, {
+              handle,
+              title,
+              description,
+              price,
+              comparePrice,
+              barcode,
+              grams,
+              stock,
+              SKU,
+            })
+          }
+        >
+          Editar
+        </Button>
+        <Button
+        w="7em"
+          colorScheme="red"
+          leftIcon={<FaTrashAlt />}
+          onClick={() => onDelete(id)}
+        >
+          Eliminar
+        </Button>
       </Flex>
     </Box>
   );
