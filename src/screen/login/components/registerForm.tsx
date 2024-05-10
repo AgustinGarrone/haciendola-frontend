@@ -9,6 +9,7 @@ import {
   FormLabel,
   Input,
   Text,
+  Link
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { FormMode } from "..";
@@ -72,14 +73,13 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
           {error}
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
+      <form style={{ textAlign: "center" }} onSubmit={handleSubmit}>
         <FormControl id="name" mt={4}>
           <FormLabel>Nombre</FormLabel>
           <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Nombre"
           />
         </FormControl>
         <FormControl id="lastname" mt={4}>
@@ -88,7 +88,6 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
             type="text"
             value={lastname}
             onChange={(e) => setLastname(e.target.value)}
-            placeholder="Apellido"
           />
         </FormControl>
         <FormControl id="email" mt={4}>
@@ -97,17 +96,15 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Correo electrónico"
           />
           <FormHelperText>Nunca compartiremos tu email.</FormHelperText>
         </FormControl>
         <FormControl id="password" mt={4}>
-          <FormLabel>Password</FormLabel>
+          <FormLabel>Contraseña</FormLabel>
           <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
           />
         </FormControl>
         <Button type="submit" mt={6} colorScheme="blue">
@@ -117,9 +114,9 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
       <Flex>
         <Text mt={4}>
           ¿Ya tienes una cuenta?{" "}
-          <Text onClick={() => changeMode(FormMode.LOGIN)} color="blue">
+          <Link onClick={() => changeMode(FormMode.LOGIN)} color="blue">
             Iniciar sesión
-          </Text>
+          </Link>
         </Text>
       </Flex>
     </Flex>

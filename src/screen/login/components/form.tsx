@@ -9,6 +9,7 @@ import {
   Button,
   Alert,
   AlertIcon,
+  Link,
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { FormMode } from "..";
@@ -72,14 +73,13 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
           {error}
         </Alert>
       )}
-      <form onSubmit={handleSubmit}>
+      <form style={{ textAlign: "center" }} onSubmit={handleSubmit}>
         <FormControl id="email" mt={4}>
           <FormLabel>Email</FormLabel>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Correo electrónico"
             borderRadius="md"
             variant="filled"
             _hover={{ borderColor: "blue.500" }}
@@ -92,7 +92,6 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
             borderRadius="md"
             variant="filled"
             _hover={{ borderColor: "blue.500" }}
@@ -105,13 +104,13 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
       <Flex w="100%" justifyContent="center">
         <Text mt={2}>
           ¿No tienes una cuenta?{" "}
-          <Text
+          <Link
             onClick={() => changeMode(FormMode.REGISTER)}
             color="blue"
             cursor="pointer"
           >
             Crear cuenta
-          </Text>
+          </Link>
         </Text>
       </Flex>
     </Flex>
