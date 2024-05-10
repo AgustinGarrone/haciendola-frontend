@@ -27,7 +27,7 @@ enum FormStatus {
 interface ProductFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: CreateProductDto, id: number) => void;
+  onSubmit: (formData: CreateProductDto, id?: number) => void;
   initialData?: CreateProductDto;
   id?: number;
 }
@@ -68,27 +68,36 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
+      const parsedFormData: CreateProductDto = {
+        ...formData,
+        grams: parseFloat(formData.grams),
+        stock: parseFloat(formData.stock),
+        price: parseFloat(formData.price),
+        comparePrice: parseFloat(formData.comparePrice),
+      };
+      if (
+        isNaN(parsedFormData.grams) ||
+        isNaN(parsedFormData.stock) ||
+        isNaN(parsedFormData.price) ||
+        isNaN(parsedFormData.comparePrice)
+      ) {
+        setError("Complete todos los campos");
+        return
+      } 
+      CreateProductSchema.parse(parsedFormData);
+      setError(null);
       if (formMode === FormStatus.EDIT) {
-        console.log("editando");
-        const parsedFormData: CreateProductDto = {
-          ...formData,
-          grams: parseFloat(formData.grams),
-          stock: parseFloat(formData.stock),
-          price: parseFloat(formData.price),
-          comparePrice: parseFloat(formData.comparePrice),
-        };
-        CreateProductSchema.parse(parsedFormData);
-        setError(null);
         onSubmit(parsedFormData, id!);
+      } else {
+        onSubmit(parsedFormData);
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.errors[0];
         const fieldName = firstError.path[0];
-        console.error(`Error en el campo ${fieldName}: ${firstError.message}`);
         setError(firstError.message);
       } else {
-        console.error("Error al iniciar sesión:", error);
+        console.error(error);
       }
     }
   };
@@ -104,7 +113,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {initialData ? "Editar Producto" : "Crear Producto"}
+          {formMode === FormStatus.EDIT ? "Editar Producto" : "Crear Producto"}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -203,7 +212,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             Cancelar
           </Button>
           <Button type="submit" form="a-form">
-            {initialData ? "Actualizar" : "Crear"}
+            {formMode === FormStatus.EDIT ? "Actualizar" : "Crear"}
           </Button>
         </ModalFooter>
       </ModalContent>

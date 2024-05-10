@@ -4,6 +4,7 @@ import {
   useCountAllProductsQuery,
   useDeleteProductMutation,
   useUpdateProductMutation,
+  useCreateProductMutation,
 } from "@/hooks/useProductClient";
 import { Flex } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
@@ -12,7 +13,8 @@ import { Product } from "@/types/models";
 import Pagination from "./pagination";
 import { confirmAlert, successAlert, errorAlert } from "@/helpers/alerts";
 import { ProductForm } from "../../../../../ui/components/ProductForm";
-import { CreateProductDto, ProductForEditData } from "@/types/products";
+import { CreateProductDto } from "@/types/products";
+import { NoteCreation } from "./NoteCreation";
 
 export const ListedProducts: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -25,6 +27,7 @@ export const ListedProducts: FC = () => {
   const [idToEdit, setIdToEdit] = useState<number | undefined>();
   const deleteProductMutation = useDeleteProductMutation();
   const updateProductMutation = useUpdateProductMutation();
+  const createProductMutation = useCreateProductMutation();
 
   const { data, isLoading, refetch, isRefetching } =
     useGetAllProductsQuery(currentPage);
@@ -71,14 +74,33 @@ export const ListedProducts: FC = () => {
     setIdToEdit(undefined);
   };
 
-  const handleSubmitForm = (formData: CreateProductDto, id: number) => {
-    updateProductMutation.mutateAsync({ id, updateProductDto: formData }, {
-      onSuccess: () => {
-        refetch();
-        successAlert('Actualizado con éxito')
-      },
-      onError: () => errorAlert("Error al actualizar"),
-    });
+  const handleSubmitForm = (formData: CreateProductDto, id?: number) => {
+    if (id) {
+      updateProductMutation.mutateAsync(
+        { id, updateProductDto: formData },
+        {
+          onSuccess: () => {
+            refetch();
+            setOpenProductForm(false);
+            setProductForEdit(undefined);
+            setIdToEdit(undefined);
+            successAlert("Actualizado con éxito");
+          },
+          onError: () => errorAlert("Error al actualizar"),
+        }
+      );
+    } else if (!id && formData) {
+      createProductMutation.mutateAsync(formData, {
+        onSuccess: () => {
+          refetch();
+          setOpenProductForm(false);
+          setProductForEdit(undefined);
+          setIdToEdit(undefined);
+          successAlert("Creado con éxito");
+        },
+        onError: () => errorAlert("Error al crear"),
+      });
+    }
   };
 
   useEffect(() => {
@@ -94,55 +116,63 @@ export const ListedProducts: FC = () => {
 
   return (
     <Flex
-      w="80%"
-      m=" 10px auto"
+      direction="column"
       alignItems="center"
       justifyContent="center"
-      direction="column"
+      width="100%"
     >
-      <Pagination
-        currentPage={currentPage}
-        onPageChange={handleOnPageChange}
-        totalPages={totalPages}
-      />
+      <NoteCreation onCreateClick={setOpenProductForm} />
       <Flex
-        w="100%"
-        mt="2em"
+        w="80%"
+        m=" 10px auto"
         alignItems="center"
         justifyContent="center"
-        flexWrap="wrap"
+        direction="column"
       >
-        {products && !isLoading && !isRefetching ? (
-          products.map((product) => (
-            <ProductCard
-              key={product.handle}
-              id={product.id}
-              handle={product.handle}
-              title={product.title}
-              description={product.description}
-              SKU={product.SKU}
-              grams={product.grams}
-              stock={product.stock}
-              price={product.price}
-              comparePrice={product.comparePrice}
-              barcode={product.barcode}
-              onDelete={handleOnDeleteCard}
-              onEdit={handleOpenProductForm}
-            />
-          ))
-        ) : (
-          <div style={{ height: "800px", marginTop: "1em" }}>Loading...</div>
+        <Pagination
+          currentPage={currentPage}
+          onPageChange={handleOnPageChange}
+          totalPages={totalPages}
+        />
+        <Flex
+          w="100%"
+          mt="2em"
+          alignItems="center"
+          justifyContent="center"
+          flexWrap="wrap"
+        >
+          {products && !isLoading && !isRefetching ? (
+            products.map((product) => (
+              <ProductCard
+                key={product.handle}
+                id={product.id}
+                handle={product.handle}
+                title={product.title}
+                description={product.description}
+                SKU={product.SKU}
+                grams={product.grams}
+                stock={product.stock}
+                price={product.price}
+                comparePrice={product.comparePrice}
+                barcode={product.barcode}
+                onDelete={handleOnDeleteCard}
+                onEdit={handleOpenProductForm}
+              />
+            ))
+          ) : (
+            <div style={{ height: "800px", marginTop: "1em" }}>Loading...</div>
+          )}
+        </Flex>
+        {openProductForm && (
+          <ProductForm
+            isOpen={openProductForm}
+            onClose={handleFormOnClose}
+            onSubmit={handleSubmitForm}
+            initialData={productForEdit && productForEdit}
+            id={idToEdit && idToEdit}
+          />
         )}
       </Flex>
-      {openProductForm && (
-        <ProductForm
-          isOpen={openProductForm}
-          onClose={handleFormOnClose}
-          onSubmit={handleSubmitForm}
-          initialData={productForEdit && productForEdit}
-          id={idToEdit && idToEdit}
-        />
-      )}
     </Flex>
   );
 };

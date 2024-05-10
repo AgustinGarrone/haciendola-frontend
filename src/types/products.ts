@@ -9,6 +9,7 @@ export type CreateProductDto = {
   comparePrice: number;
   barcode: string;
 };
+
 export type FormProductInputs = {
   handle: string;
   title: string;
