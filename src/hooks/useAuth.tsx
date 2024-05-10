@@ -1,6 +1,7 @@
 import React, { ReactNode, createContext, useContext } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import { DecodeTokenData } from "@/types/auth";
+import { useRouter } from "next/navigation";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -16,6 +17,9 @@ const defaultAuthContext = {
 const AuthContext = createContext(defaultAuthContext);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+
+  const router = useRouter()
+
   const isAuthenticated = () => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -51,6 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
+    router.push('/login')
   };
 
   const authContextValue = {

@@ -23,7 +23,7 @@ export default class RESTClient {
         }
 
         const jwt = await getAuthFromCache();
-        const allowedDomain = process.env.REACT_APP_DOMAIN;
+        const allowedDomain = 'http://localhost:4000/';
         if (jwt) config.headers["Authorization"] = `Bearer ${jwt}`;
         config.headers["X-Frame-Options"] = "SAMEORIGIN";
         config.headers["X-XSS-Protection"] = "1; mode=block";

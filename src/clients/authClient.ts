@@ -8,7 +8,7 @@ class AuthClient extends RESTClient {
 
   constructor() {
     super();
-    this.allowedDomain = process.env.REACT_APP_DOMAIN;
+    this.allowedDomain = 'http://localhost:4000/';
   }
 
   async login(data: LoginMutationData): Promise<UserWithToken> {

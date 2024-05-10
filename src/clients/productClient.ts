@@ -7,7 +7,7 @@ class ProductClient extends RESTClient {
 
   constructor() {
     super();
-    this.allowedDomain = process.env.REACT_APP_DOMAIN;
+    this.allowedDomain = 'http://localhost:4000/';
   }
 
   async getAll(page: number): Promise<Product[]> {
