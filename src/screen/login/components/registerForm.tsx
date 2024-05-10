@@ -15,7 +15,6 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import { FormMode } from "..";
 import { registerSchema } from "./form.schemas";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import { errorAlert } from "@/helpers/alerts";
 
 type RegisterFormProps = {
@@ -29,7 +28,6 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -42,7 +40,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
       await registerMutation.mutateAsync(formData, {
         onSuccess: (data) => {
           localStorage.setItem("accessToken", data.user.token);
-          router.push("/");
+          window.location.href = "/"
         },
         onError: (error) => {
           console.error("Error al registrar usuario:", error);

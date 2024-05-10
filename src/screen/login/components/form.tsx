@@ -21,7 +21,6 @@ import {
 import { FormMode } from "..";
 import { z } from "zod";
 import { loginSchema } from "./form.schemas";
-import { useRouter } from "next/navigation";
 import { errorAlert } from "@/helpers/alerts";
 
 type LoginFormProps = {
@@ -33,7 +32,6 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -46,15 +44,14 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
       await loginMutation.mutateAsync(formData, {
         onSuccess: (data) => {
           localStorage.setItem("accessToken", data.user.token);
-          router.push("/");
+          window.location.href = "/"
         },
         onError: (error) => {
           console.error("Error al iniciar sesión:", error);
-          errorAlert(`error al registrar`)
+          errorAlert(`error al registrar`);
           throw new Error(error.message);
         },
       });
-      router.push("/");
     } catch (error) {
       if (error instanceof z.ZodError) {
         setError(error.errors[0].message);
