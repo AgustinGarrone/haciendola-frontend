@@ -44,4 +44,6 @@ Importante verificar la conexión esté sobre el puerto 4000.
 # development
 $ pnpm run dev
 
+Una vez iniciado el proyecto debe ir a http://localhost:4000 y registrar un usuario para empezar
+
 
