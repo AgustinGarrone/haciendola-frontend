@@ -1,3 +1,4 @@
+import { CreateProductDto } from "@/types/products";
 import { Flex, Box, Text, IconButton, Button } from "@chakra-ui/react";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
@@ -13,7 +14,7 @@ type CardProps = {
   comparePrice: number;
   barcode: string;
   onDelete: (id: number) => void;
-  onEdit: (id: number) => void;
+  onEdit: (id: number, data: CreateProductDto) => void;
 };
 
 export const ProductCard = ({
@@ -61,7 +62,19 @@ export const ProductCard = ({
             colorScheme="blue"
             aria-label="Editar"
             mr="2"
-            onClick={onEdit}
+            onClick={() =>
+              onEdit(id, {
+                handle,
+                title,
+                description,
+                price,
+                comparePrice,
+                barcode,
+                grams,
+                stock,
+                SKU,
+              })
+            }
           />
         </Flex>
       </Flex>

@@ -3,6 +3,7 @@ import {
   useGetAllProductsQuery,
   useCountAllProductsQuery,
   useDeleteProductMutation,
+  useUpdateProductMutation,
 } from "@/hooks/useProductClient";
 import { Flex } from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
@@ -10,12 +11,20 @@ import { ProductCard } from "../../../../../ui/components/ProductCard";
 import { Product } from "@/types/models";
 import Pagination from "./pagination";
 import { confirmAlert, successAlert, errorAlert } from "@/helpers/alerts";
+import { ProductForm } from "../../../../../ui/components/ProductForm";
+import { CreateProductDto, ProductForEditData } from "@/types/products";
 
 export const ListedProducts: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [openProductForm, setOpenProductForm] = useState(false);
+  const [productForEdit, setProductForEdit] = useState<
+    CreateProductDto | undefined
+  >();
+  const [idToEdit, setIdToEdit] = useState<number | undefined>();
   const deleteProductMutation = useDeleteProductMutation();
+  const updateProductMutation = useUpdateProductMutation();
 
   const { data, isLoading, refetch, isRefetching } =
     useGetAllProductsQuery(currentPage);
@@ -35,7 +44,7 @@ export const ListedProducts: FC = () => {
     if (actionConfirmed) {
       deleteProductMutation.mutateAsync(id, {
         onSuccess: () => {
-          refetch()
+          refetch();
         },
         onError: () => errorAlert("Error al eliminar"),
       });
@@ -43,6 +52,34 @@ export const ListedProducts: FC = () => {
   };
 
   const handleOnEditCard = (id: number) => {};
+
+  const handleOpenProductForm = (id: number, data: CreateProductDto) => {
+    if (!openProductForm) {
+      setOpenProductForm(true);
+      setProductForEdit(data);
+      setIdToEdit(id);
+    } else {
+      setOpenProductForm(false);
+      setProductForEdit(undefined);
+      setIdToEdit(undefined);
+    }
+  };
+
+  const handleFormOnClose = () => {
+    setOpenProductForm(false);
+    setProductForEdit(undefined);
+    setIdToEdit(undefined);
+  };
+
+  const handleSubmitForm = (formData: CreateProductDto, id: number) => {
+    updateProductMutation.mutateAsync({ id, updateProductDto: formData }, {
+      onSuccess: () => {
+        refetch();
+        successAlert('Actualizado con éxito')
+      },
+      onError: () => errorAlert("Error al actualizar"),
+    });
+  };
 
   useEffect(() => {
     setProducts(data!);
@@ -53,7 +90,7 @@ export const ListedProducts: FC = () => {
       const total = Math.ceil(productCount / 35);
       setTotalPages(total);
     }
-  }, [productCount]);
+  }, [productCount, totalPagesLoading]);
 
   return (
     <Flex
@@ -90,13 +127,22 @@ export const ListedProducts: FC = () => {
               comparePrice={product.comparePrice}
               barcode={product.barcode}
               onDelete={handleOnDeleteCard}
-              onEdit={handleOnEditCard}
+              onEdit={handleOpenProductForm}
             />
           ))
         ) : (
-          <div style={{ marginTop: "1em" }}>Loading...</div>
+          <div style={{ height: "800px", marginTop: "1em" }}>Loading...</div>
         )}
       </Flex>
+      {openProductForm && (
+        <ProductForm
+          isOpen={openProductForm}
+          onClose={handleFormOnClose}
+          onSubmit={handleSubmitForm}
+          initialData={productForEdit && productForEdit}
+          id={idToEdit && idToEdit}
+        />
+      )}
     </Flex>
   );
 };

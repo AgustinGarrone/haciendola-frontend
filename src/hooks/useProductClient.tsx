@@ -4,16 +4,12 @@ import productClient from "@/clients/productClient";
 import { CreateProductDto } from "@/types/products";
 
 export function useGetAllProductsQuery(page: number) {
-  return useQuery(
-    ["getAllProducts"],
-    async () => {
-      const response = await productClient.getAll(page);
-      return response;
-    },
-    {
-      staleTime: 1200000,
-    }
-  );
+  return useQuery(["getAllProducts"], async () => {
+    const response = await productClient.getAll(page);
+    return response;
+  } , {
+    staleTime: 1200000, 
+  });
 }
 
 export function useCountAllProductsQuery() {
@@ -23,6 +19,7 @@ export function useCountAllProductsQuery() {
   });
 }
 
+
 export function useCreateProductMutation() {
   return useMutation(async (createProductDto: CreateProductDto) => {
     const response = await productClient.create(createProductDto);
@@ -30,12 +27,14 @@ export function useCreateProductMutation() {
   });
 }
 
+
 export function useDeleteProductMutation() {
   return useMutation(async (id: number) => {
     const response = await productClient.delete(id);
     return response;
   });
 }
+
 
 export function useUpdateProductMutation() {
   return useMutation(
