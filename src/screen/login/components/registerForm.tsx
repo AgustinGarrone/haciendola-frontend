@@ -30,7 +30,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event : React.FormEvent) => {
     event.preventDefault();
 
     try {

@@ -11,7 +11,13 @@ import {
   AlertIcon,
   Link,
 } from "@chakra-ui/react";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  FormEventHandler,
+  SetStateAction,
+  useState,
+} from "react";
 import { FormMode } from "..";
 import { z } from "zod";
 import { loginSchema } from "./form.schemas";
@@ -28,7 +34,7 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
