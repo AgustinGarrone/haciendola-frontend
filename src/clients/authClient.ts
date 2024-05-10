@@ -1,24 +1,31 @@
 "use client";
-import { LoginMutationData, RegisterMutationData } from "@/types/auth";
+import { AuthResponses, LoginMutationData, RegisterMutationData } from "@/types/auth";
 import RESTClient from "./RESTClient";
-import { UserWithToken } from "@/types/models";
 
 class AuthClient extends RESTClient {
   private allowedDomain: string | undefined;
 
   constructor() {
     super();
-    this.allowedDomain = 'http://localhost:4000/';
+    this.allowedDomain = "http://localhost:4000/";
   }
 
-  async login(data: LoginMutationData): Promise<UserWithToken> {
+  async login(data: LoginMutationData): Promise<AuthResponses> {
     const response = await this.axios.post(`auth/login`, data);
-    return response.data;
+    return {
+      user: response.data,
+      status: response.status,
+      message: response.statusText,
+    };
   }
 
-  async register(data: RegisterMutationData): Promise<UserWithToken> {
+  async register(data: RegisterMutationData): Promise<AuthResponses> {
     const response = await this.axios.post("auth/register", data);
-    return response.data;
+    return {
+      user: response.data,
+      status: response.status,
+      message: response.statusText,
+    };
   }
 }
 

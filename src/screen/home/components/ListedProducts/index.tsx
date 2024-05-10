@@ -34,11 +34,6 @@ export const ListedProducts: FC = () => {
   const { data: productCount, isLoading: totalPagesLoading } =
     useCountAllProductsQuery();
 
-  const handleOnPageChange = (e: number) => {
-    setCurrentPage(e);
-    refetch();
-  };
-
   const handleOnDeleteCard = async (id: number) => {
     const actionConfirmed = await confirmAlert(
       "Eliminar?",
@@ -54,7 +49,9 @@ export const ListedProducts: FC = () => {
     }
   };
 
-  const handleOnEditCard = (id: number) => {};
+  const handleOnPageChange = (e: number) => {
+    setCurrentPage(e);
+  };
 
   const handleOpenProductForm = (id: number, data: CreateProductDto) => {
     if (!openProductForm) {
@@ -114,6 +111,10 @@ export const ListedProducts: FC = () => {
     }
   }, [productCount, totalPagesLoading]);
 
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
+
   return (
     <Flex
       direction="column"
@@ -140,7 +141,7 @@ export const ListedProducts: FC = () => {
           alignItems="center"
           justifyContent="center"
           flexWrap="wrap"
-          gap='1em'
+          gap="1em"
         >
           {products && !isLoading && !isRefetching ? (
             products.map((product) => (

@@ -1,27 +1,30 @@
 "use client";
-import { LoginMutationData, RegisterMutationData } from "@/types/auth";
+import {
+  AuthResponses,
+  LoginMutationData,
+  RegisterMutationData,
+} from "@/types/auth";
 import { useMutation } from "react-query";
 import AuthClient from "../clients/authClient";
-import { UserWithToken } from "@/types/models";
 
 const useLoginMutation = () => {
-  return useMutation<UserWithToken, Error, LoginMutationData>(
+  return useMutation<AuthResponses, Error, LoginMutationData>(
     async (data: LoginMutationData) => {
-      const response = await AuthClient.login(data);
+      const response = await AuthClient.login(data );
       return response;
-    }
+    },
   );
 };
 
 const useRegisterMutation = () => {
-  return useMutation<UserWithToken, Error, RegisterMutationData>(
+  return useMutation<AuthResponses, Error, RegisterMutationData>(
     async (data: RegisterMutationData) => {
       const response = await AuthClient.register(data);
       return response;
     },
     {
       onSuccess: (data) => {
-        localStorage.setItem("accessToken", data.token);
+        localStorage.setItem("accessToken", data.user.token);
       },
       onError: (error) => {
         console.error("Error al iniciar sesión:", error);

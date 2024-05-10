@@ -9,13 +9,14 @@ import {
   FormLabel,
   Input,
   Text,
-  Link
+  Link,
 } from "@chakra-ui/react";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { FormMode } from "..";
 import { registerSchema } from "./form.schemas";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { errorAlert } from "@/helpers/alerts";
 
 type RegisterFormProps = {
   changeMode: Dispatch<SetStateAction<FormMode>>;
@@ -30,7 +31,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (event : React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
@@ -40,12 +41,13 @@ export const RegisterForm: FC<RegisterFormProps> = ({ changeMode }) => {
 
       await registerMutation.mutateAsync(formData, {
         onSuccess: (data) => {
-          localStorage.setItem("accessToken", data.token);
+          localStorage.setItem("accessToken", data.user.token);
           router.push("/");
         },
         onError: (error) => {
-          console.error("Error al iniciar sesión:", error);
-          throw new Error(error.message);
+          console.error("Error al registrar usuario:", error);
+          errorAlert(`error al registrar`)
+          throw new Error(error);
         },
       });
     } catch (error) {

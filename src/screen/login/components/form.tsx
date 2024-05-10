@@ -22,6 +22,7 @@ import { FormMode } from "..";
 import { z } from "zod";
 import { loginSchema } from "./form.schemas";
 import { useRouter } from "next/navigation";
+import { errorAlert } from "@/helpers/alerts";
 
 type LoginFormProps = {
   changeMode: Dispatch<SetStateAction<FormMode>>;
@@ -44,11 +45,12 @@ export const LoginForm: FC<LoginFormProps> = ({ changeMode }) => {
 
       await loginMutation.mutateAsync(formData, {
         onSuccess: (data) => {
-          localStorage.setItem("accessToken", data.token);
+          localStorage.setItem("accessToken", data.user.token);
           router.push("/");
         },
         onError: (error) => {
           console.error("Error al iniciar sesión:", error);
+          errorAlert(`error al registrar`)
           throw new Error(error.message);
         },
       });
